@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardioAI - Patient Cardiac Risk Assessment & Clinical DSS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="brand">
+                <div class="brand-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+                </div>
+                <span>CardioAI <span style="font-weight: 500; font-size: 0.85rem; color: var(--slate-500);">Clinical DSS</span></span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link active">Patient Assessment</a></li>
+                <li><a href="batch.html" class="nav-link">Batch Screening</a></li>
+                <li><a href="history.html" class="nav-link">History & Records</a></li>
+                <li><a href="models.html" class="nav-link">Model Analytics</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Patient Cardiac Risk Assessment</h1>
+                <p class="page-subtitle">Predictive Machine Learning, Conformal Uncertainty, Local Explainability & Guidelines</p>
+            </div>
+            <div>
+                <button type="button" class="btn btn-outline btn-sm" id="voiceBtn" onclick="toggleVoiceDictation()" style="background-color: white;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+                    <span id="voiceText">Voice Dictation</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="assessment-grid" style="display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 32px; align-items: start;">
+            <!-- Left: Form -->
+            <div class="card">
+                <div class="card-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                    Clinical Vitals & Diagnostics
+                </div>
+
+                <!-- Presets -->
+                <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                    <span style="font-size: 0.75rem; font-weight: 700; color: var(--slate-400); align-self: center;">QUICK PRESETS:</span>
+                    <button type="button" class="btn btn-outline btn-sm" onclick="applyPreset('healthy')" style="border-radius: 9999px;">🌱 Healthy Profile</button>
+                    <button type="button" class="btn btn-outline btn-sm" onclick="applyPreset('moderate')" style="border-radius: 9999px;">⚠️ Borderline</button>
+                    <button type="button" class="btn btn-outline btn-sm" onclick="applyPreset('cardiac')" style="border-radius: 9999px;">🚨 Known High Risk</button>
+                </div>
+
+                <form id="predictionForm">
+                    <!-- 0. Patient Demographics & Record Identifier -->
+                    <div class="form-section">
+                        <div class="section-title">0. Patient Record Identification</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Patient Full Name</label>
+                                <input type="text" id="input_patient_name" name="patient_name" class="form-control" value="Sarah Miller" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Medical Record Number (MRN)</label>
+                                <input type="text" id="input_mrn" name="mrn" class="form-control" value="MRN-10023" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 1. Patient Demographics -->
+                    <div class="form-section">
+                        <div class="section-title">1. Patient Baseline</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Age <span class="label-hint">years</span></label>
+                                <input type="number" id="input_age" name="age" class="form-control" required min="18" max="100" value="52">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Biological Sex</label>
+                                <select id="input_sex" name="sex" class="form-control" required>
+                                    <option value="1">Male</option>
+                                    <option value="0">Female</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Hemodynamics & Laboratory -->
+                    <div class="form-section">
+                        <div class="section-title">2. Blood Pressure & Lipid Profile</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Resting Blood Pressure <span class="label-hint">trestbps (mmHg)</span></label>
+                                <input type="number" id="input_trestbps" name="trestbps" class="form-control" required min="80" max="220" value="125">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Serum Cholesterol <span class="label-hint">chol (mg/dL)</span></label>
+                                <input type="number" id="input_chol" name="chol" class="form-control" required min="100" max="600" value="212">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Fasting Blood Sugar &gt; 120 mg/dL <span class="label-hint">fbs</span></label>
+                                <select id="input_fbs" name="fbs" class="form-control" required>
+                                    <option value="0">No (≤ 120 mg/dL - Normal)</option>
+                                    <option value="1">Yes (&gt; 120 mg/dL - Elevated)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Resting ECG <span class="label-hint">restecg</span></label>
+                                <select id="input_restecg" name="restecg" class="form-control" required>
+                                    <option value="0">0: Normal</option>
+                                    <option value="1" selected>1: ST-T Wave Abnormality</option>
+                                    <option value="2">2: Left Ventricular Hypertrophy</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Symptoms & Stress Test -->
+                    <div class="form-section">
+                        <div class="section-title">3. Symptoms & Exercise Stress Testing</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Chest Pain Category <span class="label-hint">cp</span></label>
+                                <select id="input_cp" name="cp" class="form-control" required>
+                                    <option value="0">0: Typical Angina</option>
+                                    <option value="1">1: Atypical Angina</option>
+                                    <option value="2">2: Non-Anginal Pain</option>
+                                    <option value="3">3: Asymptomatic</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Peak Heart Rate Achieved <span class="label-hint">thalach (bpm)</span></label>
+                                <input type="number" id="input_thalach" name="thalach" class="form-control" required min="60" max="230" value="168">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Exercise-Induced Angina <span class="label-hint">exang</span></label>
+                                <select id="input_exang" name="exang" class="form-control" required>
+                                    <option value="0">No (0)</option>
+                                    <option value="1">Yes (1 - Exertional Discomfort)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">ST Depression Induced <span class="label-hint">oldpeak (mm)</span></label>
+                                <input type="number" step="0.1" id="input_oldpeak" name="oldpeak" class="form-control" required min="0" max="10" value="1.0">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Slope of Peak ST Segment <span class="label-hint">slope</span></label>
+                                <select id="input_slope" name="slope" class="form-control" required>
+                                    <option value="0">0: Upsloping</option>
+                                    <option value="1">1: Flat</option>
+                                    <option value="2" selected>2: Downsloping</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Fluoroscopy & Thallium -->
+                    <div class="form-section">
+                        <div class="section-title">4. Fluoroscopy & Scintigraphy</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Major Vessels Colored <span class="label-hint">ca (0-3)</span></label>
+                                <select id="input_ca" name="ca" class="form-control" required>
+                                    <option value="0">0 Vessels</option>
+                                    <option value="1">1 Vessel</option>
+                                    <option value="2" selected>2 Vessels</option>
+                                    <option value="3">3 Vessels</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Thallium Scintigraphy <span class="label-hint">thal</span></label>
+                                <select id="input_thal" name="thal" class="form-control" required>
+                                    <option value="1">1: Normal</option>
+                                    <option value="2">2: Fixed Defect</option>
+                                    <option value="3" selected>3: Reversible Defect</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 1rem; margin-top: 8px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        Run AI Cardiac Assessment
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right: Results Panel -->
+            <div id="resultsContainer">
+                <div class="card" style="text-align: center; padding: 48px 24px;">
+                    <div style="width: 64px; height: 64px; background-color: var(--primary-light); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+                    </div>
+                    <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--slate-800); margin-bottom: 8px;">Ready for Evaluation</h3>
+                    <p style="font-size: 0.9rem; color: var(--slate-500); max-width: 380px; margin: 0 auto 24px;">
+                        Enter patient clinical vitals on the left or select a preset to generate instant risk predictions, local SHAP attributions, counterfactual recourse, and EHR SOAP notes.
+                    </p>
+                    <div style="display: flex; justify-content: center; gap: 8px;">
+                        <button type="button" class="btn btn-outline btn-sm" onclick="applyPreset('healthy')">Test Healthy Case</button>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="applyPreset('cardiac')">Test Cardiac Case</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p><b>CardioAI Clinical Decision Support System</b> &bull; Decoupled Frontend & Backend Architecture</p>
+        <p class="footer-disclaimer">Notice: Designed for educational, screening, and clinical decision support purposes. Not a definitive medical diagnosis.</p>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

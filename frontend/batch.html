@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batch Patient Screening - CardioAI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="brand">
+                <div class="brand-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+                </div>
+                <span>CardioAI <span style="font-weight: 500; font-size: 0.85rem; color: var(--slate-500);">Clinical DSS</span></span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link">Patient Assessment</a></li>
+                <li><a href="batch.html" class="nav-link active">Batch Screening</a></li>
+                <li><a href="history.html" class="nav-link">History & Records</a></li>
+                <li><a href="models.html" class="nav-link">Model Analytics</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Batch Patient Screening</h1>
+                <p class="page-subtitle">Upload multi-patient CSV datasets for automated high-throughput cardiac risk stratification</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 12px;">Upload Patient Dataset (.CSV)</h3>
+            <p style="font-size: 0.875rem; color: var(--slate-600); margin-bottom: 20px;">
+                Required columns: <code>age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal</code> (optional: <code>patient_name, mrn</code>).
+            </p>
+
+            <form id="batchForm">
+                <div style="border: 2px dashed var(--slate-300); border-radius: var(--radius-md); padding: 36px 20px; text-align: center; background-color: var(--slate-50); cursor: pointer;" onclick="document.getElementById('csv_file').click()">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" style="margin: 0 auto 12px; display: block;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    <div style="font-weight: 700; color: var(--slate-800); margin-bottom: 4px;">Choose CSV file or drag and drop</div>
+                    <div style="font-size: 0.8rem; color: var(--slate-500);">Comma-separated values (.csv) up to 10MB</div>
+                    <input type="file" id="csv_file" accept=".csv" required style="display: none;">
+                    <div id="file_selected" style="margin-top: 10px; font-weight: 600; color: var(--primary);"></div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+                    <a id="templateLink" href="#" class="btn btn-outline btn-sm">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Download Sample CSV Template
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        Process Batch Screening
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div id="batchResultsContainer"></div>
+    </main>
+
+    <footer class="footer">
+        <p><b>CardioAI Clinical Decision Support System</b> &bull; Decoupled Frontend & Backend Architecture</p>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/batch.js"></script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historical Clinical Assessments - CardioAI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="brand">
+                <div class="brand-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+                </div>
+                <span>CardioAI <span style="font-weight: 500; font-size: 0.85rem; color: var(--slate-500);">Clinical DSS</span></span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link">Patient Assessment</a></li>
+                <li><a href="batch.html" class="nav-link">Batch Screening</a></li>
+                <li><a href="history.html" class="nav-link active">History & Records</a></li>
+                <li><a href="models.html" class="nav-link">Model Analytics</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Historical Clinical Assessments</h1>
+                <p class="page-subtitle">Patient consultation archive, longitudinal progression tracking, and HL7 FHIR exports</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <a id="csvExportBtn" href="#" class="btn btn-outline btn-sm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Export All (CSV)
+                </a>
+                <button type="button" id="clearHistoryBtn" class="btn btn-outline btn-sm" style="color: var(--danger); border-color: var(--danger-border);">
+                    Clear History
+                </button>
+            </div>
+        </div>
+
+        <!-- Summary Stats -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
+            <div class="card" style="margin-bottom: 0; padding: 18px 22px;">
+                <div style="font-size: 0.775rem; font-weight: 700; text-transform: uppercase; color: var(--slate-400);">Total Screenings</div>
+                <div id="totalCount" style="font-size: 1.75rem; font-weight: 800; color: var(--slate-900); margin-top: 4px;">...</div>
+            </div>
+            <div class="card" style="margin-bottom: 0; padding: 18px 22px;">
+                <div style="font-size: 0.775rem; font-weight: 700; text-transform: uppercase; color: var(--slate-400);">High Risk Cases</div>
+                <div id="highCount" style="font-size: 1.75rem; font-weight: 800; color: var(--danger); margin-top: 4px;">...</div>
+            </div>
+            <div class="card" style="margin-bottom: 0; padding: 18px 22px;">
+                <div style="font-size: 0.775rem; font-weight: 700; text-transform: uppercase; color: var(--slate-400);">Low Risk Cases</div>
+                <div id="lowCount" style="font-size: 1.75rem; font-weight: 800; color: var(--success); margin-top: 4px;">...</div>
+            </div>
+        </div>
+
+        <!-- Table Card -->
+        <div class="card" style="padding: 0; overflow: hidden;">
+            <div style="padding: 16px 24px; border-bottom: 1px solid var(--slate-200); display: flex; gap: 8px;">
+                <button class="filter-btn btn btn-primary btn-sm active" onclick="filterRecords('all', this)">All</button>
+                <button class="filter-btn btn btn-outline btn-sm" onclick="filterRecords('high', this)">High Risk</button>
+                <button class="filter-btn btn btn-outline btn-sm" onclick="filterRecords('low', this)">Low Risk</button>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem; text-align: left;">
+                    <thead>
+                        <tr style="background-color: var(--slate-50); border-bottom: 1px solid var(--slate-200); font-size: 0.775rem; text-transform: uppercase; color: var(--slate-600);">
+                            <th style="padding: 12px 18px;">Patient & MRN</th>
+                            <th style="padding: 12px 18px;">Date</th>
+                            <th style="padding: 12px 18px;">Age / Sex</th>
+                            <th style="padding: 12px 18px;">Vitals (BP / Chol)</th>
+                            <th style="padding: 12px 18px;">Max HR / ST Dep</th>
+                            <th style="padding: 12px 18px;">Classification</th>
+                            <th style="padding: 12px 18px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTbody">
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 36px; color: var(--slate-400);">Loading consultation records...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p><b>CardioAI Clinical Decision Support System</b> &bull; Decoupled Frontend & Backend Architecture</p>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/history.js"></script>
+</body>
+</html>

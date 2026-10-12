@@ -1,0 +1,122 @@
+{
+    "best_model": "Logistic Regression",
+    "model_comparison": {
+        "Logistic Regression": {
+            "accuracy": 0.840983606557377,
+            "recall": 0.8715909090909092,
+            "precision": 0.8480627060627061,
+            "f1": 0.8544337355131958,
+            "roc_auc": 0.9168202360910694,
+            "accuracy_std": 0.0345729374658355,
+            "roc_auc_std": 0.0189016058227117
+        },
+        "Random Forest": {
+            "accuracy": 0.784863387978142,
+            "recall": 0.8049242424242424,
+            "precision": 0.8064616755793226,
+            "f1": 0.8002187398199407,
+            "roc_auc": 0.8872827982202983,
+            "accuracy_std": 0.026956899495490693,
+            "roc_auc_std": 0.02145198124397504
+        },
+        "Gradient Boosting": {
+            "accuracy": 0.7948087431693989,
+            "recall": 0.8170454545454545,
+            "precision": 0.807092907092907,
+            "f1": 0.8086414493892061,
+            "roc_auc": 0.8652003667628667,
+            "accuracy_std": 0.05136379485493384,
+            "roc_auc_std": 0.028492460449193086
+        },
+        "XGBoost": {
+            "accuracy": 0.794863387978142,
+            "recall": 0.8170454545454545,
+            "precision": 0.8121572871572871,
+            "f1": 0.8066152210413631,
+            "roc_auc": 0.8791741822991824,
+            "accuracy_std": 0.05637623111771813,
+            "roc_auc_std": 0.028021201704831782
+        },
+        "K-Nearest Neighbors": {
+            "accuracy": 0.7981420765027323,
+            "recall": 0.8535984848484848,
+            "precision": 0.7927736340236341,
+            "f1": 0.820735766652757,
+            "roc_auc": 0.8704046917588585,
+            "accuracy_std": 0.023204041531001696,
+            "roc_auc_std": 0.020484539802611647
+        },
+        "Support Vector Machine": {
+            "accuracy": 0.8113661202185792,
+            "recall": 0.8289772727272726,
+            "precision": 0.8273996388028897,
+            "f1": 0.8240355942745465,
+            "roc_auc": 0.8928436147186147,
+            "accuracy_std": 0.0366684989728917,
+            "roc_auc_std": 0.024802143381305052
+        },
+        "Voting Ensemble (Soft)": {
+            "accuracy": 0.8179234972677596,
+            "recall": 0.8412878787878787,
+            "precision": 0.8321056721056721,
+            "f1": 0.8310242144149804,
+            "roc_auc": 0.9011972402597402,
+            "accuracy_std": 0.03765285072113545,
+            "roc_auc_std": 0.020827127348786605
+        }
+    },
+    "test_confusion_matrix": [
+        [
+            24,
+            4
+        ],
+        [
+            5,
+            28
+        ]
+    ],
+    "test_classification_report": {
+        "No Disease": {
+            "precision": 0.8275862068965517,
+            "recall": 0.8571428571428571,
+            "f1-score": 0.8421052631578947,
+            "support": 28.0
+        },
+        "Heart Disease": {
+            "precision": 0.875,
+            "recall": 0.8484848484848485,
+            "f1-score": 0.8615384615384616,
+            "support": 33.0
+        },
+        "accuracy": 0.8524590163934426,
+        "macro avg": {
+            "precision": 0.8512931034482758,
+            "recall": 0.8528138528138528,
+            "f1-score": 0.8518218623481781,
+            "support": 61.0
+        },
+        "weighted avg": {
+            "precision": 0.8532362916902204,
+            "recall": 0.8524590163934426,
+            "f1-score": 0.8526183049047588,
+            "support": 61.0
+        }
+    },
+    "training_timestamp": "2026-10-12 18:39:02",
+    "dataset_size_unique": 302,
+    "features": [
+        "age",
+        "sex",
+        "cp",
+        "trestbps",
+        "chol",
+        "fbs",
+        "restecg",
+        "thalach",
+        "exang",
+        "oldpeak",
+        "slope",
+        "ca",
+        "thal"
+    ]
+}

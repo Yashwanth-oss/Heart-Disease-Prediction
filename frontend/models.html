@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Benchmark Analytics - CardioAI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        .metrics-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+            text-align: left;
+        }
+        .metrics-table th {
+            background-color: var(--slate-50);
+            color: var(--slate-600);
+            font-weight: 700;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--slate-200);
+            font-size: 0.775rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .metrics-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--slate-200);
+            color: var(--slate-700);
+        }
+        .metrics-table tr.best-row {
+            background-color: var(--primary-light);
+            font-weight: 600;
+        }
+
+        .cm-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            max-width: 380px;
+            margin: 16px auto;
+            text-align: center;
+        }
+        .cm-cell {
+            padding: 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--slate-200);
+        }
+        .cm-cell.tn { background-color: var(--success-light); border-color: var(--success-border); }
+        .cm-cell.fp { background-color: var(--warning-light); border-color: var(--warning-border); }
+        .cm-cell.fn { background-color: var(--danger-light); border-color: var(--danger-border); }
+        .cm-cell.tp { background-color: var(--success-light); border-color: var(--success-border); }
+        .cm-num { font-size: 1.5rem; font-weight: 800; color: var(--slate-900); }
+        .cm-lbl { font-size: 0.75rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase; margin-top: 2px; }
+
+        .feat-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-size: 0.825rem;
+        }
+        .feat-name {
+            width: 140px;
+            font-weight: 600;
+            color: var(--slate-700);
+            text-align: right;
+        }
+        .feat-bar-wrap {
+            flex: 1;
+            background-color: var(--slate-100);
+            border-radius: 9999px;
+            height: 10px;
+            overflow: hidden;
+        }
+        .feat-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #3b82f6);
+            border-radius: 9999px;
+            transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .feat-score {
+            width: 50px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--slate-500);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="brand">
+                <div class="brand-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+                </div>
+                <span>CardioAI <span style="font-weight: 500; font-size: 0.85rem; color: var(--slate-500);">Clinical DSS</span></span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link">Patient Assessment</a></li>
+                <li><a href="batch.html" class="nav-link">Batch Screening</a></li>
+                <li><a href="history.html" class="nav-link">History & Records</a></li>
+                <li><a href="models.html" class="nav-link active">Model Analytics</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Model Analytics & Validation Rigor</h1>
+                <p class="page-subtitle">Cross-validated benchmark of classification algorithms, confusion matrices, and clinical feature importances</p>
+            </div>
+            <div id="modelStatusBadge">
+                <span class="badge badge-info">Querying Pipeline...</span>
+            </div>
+        </div>
+
+        <!-- Methodology Notice Card -->
+        <div class="card" style="background: linear-gradient(135deg, #eff6ff, #f8fafc); border-color: #bfdbfe;">
+            <div class="card-title" style="color: var(--primary);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                Data Integrity & De-Duplication Protocol
+            </div>
+            <p style="font-size: 0.9rem; color: var(--slate-700); line-height: 1.6;">
+                Standard public datasets for heart disease often replicate the 303 original Cleveland patients across 1,025 rows (70.5% duplicate records). Without deduplication, standard train-test splitting leaks identical patient profiles into validation folds, producing artificially inflated (~98-100%) test scores that fail in real clinical settings. <b>CardioAI enforces strict patient deduplication and 5-Fold Stratified Cross-Validation</b> to guarantee authentic real-world clinical generalization.
+            </p>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="card" style="text-align: center; padding: 48px 20px;">
+            <div class="spinner" style="margin: 0 auto 16px auto;"></div>
+            <p style="color: var(--slate-500); font-weight: 500;">Loading benchmark metrics and model analytics from backend...</p>
+        </div>
+
+        <div id="analyticsContent" style="display: none;">
+            <!-- 5-Fold CV Comparison Table -->
+            <div class="card">
+                <div class="card-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    5-Fold Stratified Cross-Validation Benchmark
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table class="metrics-table">
+                        <thead>
+                            <tr>
+                                <th>Algorithm</th>
+                                <th>Accuracy (Mean)</th>
+                                <th>Recall / Sensitivity</th>
+                                <th>Precision</th>
+                                <th>F1-Score</th>
+                                <th>ROC-AUC Score</th>
+                                <th>Deployment Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="metricsTableBody">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Holdout Performance & Feature Importance -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 24px; align-items: start;">
+                <!-- Confusion Matrix Card -->
+                <div class="card">
+                    <div class="card-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                        Hold-Out Test Confusion Matrix
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--slate-500); margin-bottom: 12px;">
+                        Evaluated on unseen 20% holdout test partition (61 deduplicated patients).
+                    </p>
+
+                    <div class="cm-grid">
+                        <div class="cm-cell tn">
+                            <div class="cm-num" id="cmTN">-</div>
+                            <div class="cm-lbl">True Negative (Healthy)</div>
+                        </div>
+                        <div class="cm-cell fp">
+                            <div class="cm-num" id="cmFP">-</div>
+                            <div class="cm-lbl">False Positive (Type I)</div>
+                        </div>
+                        <div class="cm-cell fn">
+                            <div class="cm-num" id="cmFN">-</div>
+                            <div class="cm-lbl">False Negative (Type II)</div>
+                        </div>
+                        <div class="cm-cell tp">
+                            <div class="cm-num" id="cmTP">-</div>
+                            <div class="cm-lbl">True Positive (Cardiac)</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.825rem; color: var(--slate-600); text-align: center; margin-top: 14px;" id="cmStats">
+                        <b>Sensitivity (Recall):</b> - &bull; <b>Specificity:</b> -
+                    </div>
+                </div>
+
+                <!-- Feature Importance Card -->
+                <div class="card">
+                    <div class="card-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                        Global Feature Importance Weights
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--slate-500); margin-bottom: 16px;">
+                        Relative predictive weight of clinical biomarkers in the trained pipeline.
+                    </p>
+
+                    <div id="featureImportanceList">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 CardioAI Decoupled Architecture &bull; HL7&reg; FHIR&reg; R4 Standard Compliant &bull; For Clinical Research &bull; Version 2.4</p>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/models.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "short_name": "CardioAI",
+  "name": "CardioAI Clinical Decision Support System",
+  "icons": [],
+  "start_url": "./index.html",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "display": "standalone"
+}

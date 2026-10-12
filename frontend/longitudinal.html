@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Longitudinal Risk Progression - CardioAI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        .timeline {
+            position: relative;
+            padding-left: 32px;
+            margin-top: 24px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background-color: var(--slate-200);
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 28px;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: -32px;
+            top: 4px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background-color: white;
+            border: 4px solid var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+        .timeline-dot.high {
+            border-color: var(--danger);
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
+        }
+        .timeline-dot.low {
+            border-color: var(--success);
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
+        }
+        .visit-card {
+            background-color: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .visit-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .vitals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+            margin-top: 14px;
+        }
+        .vital-stat {
+            background-color: var(--slate-50);
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius-md);
+            padding: 8px 12px;
+        }
+        .vital-lbl { font-size: 0.75rem; color: var(--slate-500); font-weight: 600; }
+        .vital-val { font-size: 1rem; font-weight: 700; color: var(--slate-800); }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="brand">
+                <div class="brand-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+                </div>
+                <span>CardioAI <span style="font-weight: 500; font-size: 0.85rem; color: var(--slate-500);">Clinical DSS</span></span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link">Patient Assessment</a></li>
+                <li><a href="batch.html" class="nav-link">Batch Screening</a></li>
+                <li><a href="history.html" class="nav-link active">History & Records</a></li>
+                <li><a href="models.html" class="nav-link">Model Analytics</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title" id="pageTitle">Longitudinal Patient Risk Progression</h1>
+                <p class="page-subtitle" id="pageSubtitle">Tracking cardiovascular biomarkers and machine learning risk trajectories</p>
+            </div>
+            <div>
+                <a href="history.html" class="btn btn-outline btn-sm">&larr; Back to History</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--slate-200); padding-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--slate-900);" id="patientHeader">Patient History</h2>
+                    <div style="font-size: 0.85rem; color: var(--slate-500);" id="patientMeta">Fetching patient records from database...</div>
+                </div>
+                <div id="riskTrendBadge"></div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" style="text-align: center; padding: 48px 20px;">
+                <div class="spinner" style="margin: 0 auto 16px auto;"></div>
+                <p style="color: var(--slate-500); font-weight: 500;">Retrieving longitudinal records...</p>
+            </div>
+
+            <!-- Empty / Not Found State -->
+            <div id="emptyState" style="display: none; text-align: center; padding: 48px 20px;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--slate-400)" stroke-width="1.5" style="margin-bottom: 12px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--slate-700);">No Visits Recorded</h3>
+                <p style="font-size: 0.9rem; color: var(--slate-500); margin-top: 4px;">No historical visits were found for this medical record number.</p>
+                <a href="history.html" class="btn btn-primary btn-sm" style="margin-top: 16px;">View All Patients</a>
+            </div>
+
+            <!-- Timeline of consultations -->
+            <div id="timelineContainer" class="timeline" style="display: none;"></div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 CardioAI Decoupled Architecture &bull; HL7&reg; FHIR&reg; R4 Standard Compliant &bull; For Clinical Research &bull; Version 2.4</p>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/longitudinal.js"></script>
+</body>
+</html>
